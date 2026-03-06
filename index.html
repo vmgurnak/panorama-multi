@@ -70,6 +70,66 @@
             height: 50px;
          }
       }
+
+      /* .custom-hotspot {
+         font-size: 36px;
+         color: white;
+         cursor: pointer;
+         transition: 0.3s;
+         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      }
+
+      .custom-hotspot:hover {
+         transform: scale(1.2);
+         color: #ffd700;
+      } */
+
+      .custom-hotspot {
+         cursor: pointer;
+      }
+
+      /* контейнер */
+      .floor-label {
+         position: absolute;
+         top: -22px;
+         left: 50%;
+         transform: translateX(-50%);
+         color: white;
+         font-size: 13px;
+         font-weight: 500;
+         text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+         white-space: nowrap;
+      }
+
+      /* стрелка */
+      .floor-arrow {
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         background: rgba(255, 255, 255, 0.9);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+         position: relative;
+         transition: transform 0.25s, box-shadow 0.25s;
+      }
+
+      /* стрелка внутри */
+      .floor-arrow::before {
+         content: "";
+         width: 0;
+         height: 0;
+         border-left: 8px solid transparent;
+         border-right: 8px solid transparent;
+         border-top: 14px solid black;
+      }
+
+      /* hover */
+      .floor-arrow:hover {
+         transform: scale(1.2);
+         box-shadow: 0 0 18px rgba(255, 255, 255, 1);
+      }
    </style>
 </head>
 
@@ -104,20 +164,79 @@
    </div>
 
    <script src="https://cdn.pannellum.org/2.5/pannellum.js"></script>
+
    <script>
       const viewer = pannellum.viewer('panorama', {
-         default: { firstScene: "day", hfov: 100, showControls: false, autoRotate: 0 },
+         default: {
+            firstScene: "livingroom",
+            hfov: 100,
+            showControls: false,
+            sceneFadeDuration: 1000
+         },
+
          scenes: {
-            day: { type: "equirectangular", panorama: "pano.webp", autoLoad: true }
+
+            livingroom: {
+               type: "equirectangular",
+               panorama: "livingroom.webp",
+               autoLoad: true,
+               hotSpots: [
+                  {
+                     pitch: 0,
+                     yaw: 150,
+                     cssClass: "custom-hotspot",
+                     createTooltipFunc: hotspotToBedroom,
+                     clickHandlerFunc: () => viewer.loadScene("bedroom")
+                  }
+               ]
+            },
+
+            bedroom: {
+               type: "equirectangular",
+               panorama: "bedroom.webp",
+               hotSpots: [
+                  {
+                     pitch: 0,
+                     yaw: 120,
+                     cssClass: "custom-hotspot",
+                     createTooltipFunc: hotspotToLiving,
+                     clickHandlerFunc: () => viewer.loadScene("livingroom")
+                  }
+               ]
+            }
          }
       });
+
+      // function hotspotToBedroom(div) {
+      //    div.innerHTML = "➜ Bedroom";
+      //    div.title = "Go to bedroom";
+      // }
+
+      function hotspotToLiving(div) {
+         div.innerHTML = `
+      <div class="floor-arrow"></div>
+      <div class="floor-label">Bedroom</div>
+   `;
+      }
+
+      // function hotspotToLiving(div) {
+      //    div.innerHTML = "⬅ Living";
+      //    div.title = "Back to living room";
+      // }
+
+      function hotspotToBedroom(div) {
+         div.innerHTML = `
+      <div class="floor-arrow"></div>
+      <div class="floor-label">Living</div>
+   `;
+      }
 
       function addMobileClick(el, fn) {
          el.addEventListener('click', fn);
          el.addEventListener('touchend', e => { e.preventDefault(); fn(); });
       }
 
-      // Панель управления
+      // Панель управления (твоя логика)
       addMobileClick(document.getElementById('up'), () => viewer.setPitch(viewer.getPitch() - 10));
       addMobileClick(document.getElementById('down'), () => viewer.setPitch(viewer.getPitch() + 10));
       addMobileClick(document.getElementById('left'), () => viewer.setYaw(viewer.getYaw() - 10));
@@ -125,10 +244,9 @@
       addMobileClick(document.getElementById('zoomIn'), () => viewer.setHfov(viewer.getHfov() - 10));
       addMobileClick(document.getElementById('zoomOut'), () => viewer.setHfov(viewer.getHfov() + 10));
       addMobileClick(document.getElementById('fs'), () => {
-         if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
-         else { document.exitFullscreen(); }
+         if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+         else document.exitFullscreen();
       });
-
    </script>
 </body>
 
