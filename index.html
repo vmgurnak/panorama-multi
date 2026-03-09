@@ -71,18 +71,6 @@
          }
       }
 
-      /* .custom-hotspot {
-         font-size: 36px;
-         color: white;
-         cursor: pointer;
-         transition: 0.3s;
-         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      }
-
-      .custom-hotspot:hover {
-         transform: scale(1.2);
-         color: #ffd700;
-      } */
 
       .custom-hotspot {
          cursor: pointer;
@@ -123,6 +111,7 @@
          border-left: 8px solid transparent;
          border-right: 8px solid transparent;
          border-top: 14px solid black;
+         transform: rotate(180deg);
       }
 
       /* hover */
@@ -182,10 +171,10 @@
                autoLoad: true,
                hotSpots: [
                   {
-                     pitch: 0,
-                     yaw: 150,
+                     pitch: -16,
+                     yaw: 148,
                      cssClass: "custom-hotspot",
-                     createTooltipFunc: hotspotToBedroom,
+                     createTooltipFunc: hotspotToLiving,
                      clickHandlerFunc: () => viewer.loadScene("bedroom")
                   }
                ]
@@ -196,10 +185,10 @@
                panorama: "bedroom.webp",
                hotSpots: [
                   {
-                     pitch: 0,
-                     yaw: 120,
+                     pitch: -24,
+                     yaw: 117,
                      cssClass: "custom-hotspot",
-                     createTooltipFunc: hotspotToLiving,
+                     createTooltipFunc: hotspotToBedroom,
                      clickHandlerFunc: () => viewer.loadScene("livingroom")
                   }
                ]
@@ -207,10 +196,9 @@
          }
       });
 
-      // function hotspotToBedroom(div) {
-      //    div.innerHTML = "➜ Bedroom";
-      //    div.title = "Go to bedroom";
-      // }
+      viewer.on('mouseup', function (e) {
+         console.log(viewer.mouseEventToCoords(e));
+      });
 
       function hotspotToLiving(div) {
          div.innerHTML = `
@@ -218,11 +206,6 @@
       <div class="floor-label">Bedroom</div>
    `;
       }
-
-      // function hotspotToLiving(div) {
-      //    div.innerHTML = "⬅ Living";
-      //    div.title = "Back to living room";
-      // }
 
       function hotspotToBedroom(div) {
          div.innerHTML = `
